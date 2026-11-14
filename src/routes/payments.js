@@ -28,7 +28,7 @@ async function sendConfirmation(order) {
   try {
     await sendOrderStatusEmail(order, 'processing');
   } catch (error) {
-    console.error(\`[EMAIL] processing confirmation failed for \${order.orderNumber}:\`, error.message);
+    console.error(`[EMAIL] processing confirmation failed for ${order.orderNumber}:`, error.message);
   }
 }
 
@@ -104,7 +104,7 @@ router.post('/verify', async (req, res, next) => {
     const payment = await getClient().payments.fetch(razorpay_payment_id);
     if (payment.status === 'failed') return res.status(400).json({ error: 'Razorpay reports this payment as failed' });
     if (payment.status !== 'captured' && payment.status !== 'authorized') {
-      return res.status(400).json({ error: \`Payment is not captured yet (\${payment.status || 'unknown'})\` });
+      return res.status(400).json({ error: `Payment is not captured yet (${payment.status || 'unknown'})` });
     }
     if (!paymentMatchesOrder(payment, order)) {
       return res.status(400).json({ error: 'Payment amount, currency, or order does not match' });
@@ -147,7 +147,7 @@ async function processWebhook(event) {
     if (isCaptured(order) || order.paymentStatus === 'refunded') return;
     let payment = paymentEntity;
     if (paymentId) payment = await getClient().payments.fetch(paymentId);
-    if (!payment) throw new Error(\`No payment entity available for \${order.orderNumber}\`);
+    if (!payment) throw new Error(`No payment entity available for ${order.orderNumber}`);
 
     const result = await processCapturedPayment({
       order, payment, paymentId: paymentId || order.razorpayPaymentId
@@ -179,7 +179,7 @@ async function webhookHandler(req, res) {
     const rawBody = req.body.toString('utf8');
     const payload = JSON.parse(rawBody);
     const eventId = String(req.headers['x-razorpay-event-id'] || '').trim() ||
-      \`sha256:\${crypto.createHash('sha256').update(rawBody).digest('hex')}\`;
+      `sha256:${crypto.createHash('sha256').update(rawBody).digest('hex')}`;
 
     let eventRecord = await WebhookEvent.findOne({ eventId });
     if (!eventRecord) {

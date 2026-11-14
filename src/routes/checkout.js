@@ -106,7 +106,7 @@ router.post('/create', async (req, res, next) => {
       await reservedOrder.save();
 
       sendOrderStatusEmail(reservedOrder, 'processing').catch(err => {
-        console.error(\`Order confirmation email failed for \${reservedOrder.orderNumber}:\`, err);
+        console.error(`Order confirmation email failed for ${reservedOrder.orderNumber}:`, err);
       });
 
       return res.status(201).json(responseFor(reservedOrder));

@@ -33,7 +33,7 @@ const adminName = req => String(req.admin?.email || req.admin?.sub || req.admin?
 function fireEmail(order, status) {
   Promise.resolve()
     .then(() => sendOrderStatusEmail(order, status))
-    .catch(err => console.error(\`COD \${status} email failed for \${order.orderNumber}:\`, err.message));
+    .catch(err => console.error(`COD ${status} email failed for ${order.orderNumber}:`, err.message));
 }
 
 function withBucket(order) {
