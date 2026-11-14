@@ -1,0 +1,60 @@
+name: Dependency advisory report
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/dependency-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Generate advisory report
+        shell: bash
+        run: |
+          npm audit --json > npm-audit-report.json || true
+          node <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('npm-audit-report.json', 'utf8'));
+          const rows = Object.entries(report.vulnerabilities || {});
+          const counts = report.metadata?.vulnerabilities || {};
+          const lines = [
+            '# Dependency advisory report',
+            '',
+            `Reported totals: ${counts.total ?? 'unknown'} (critical ${counts.critical ?? 0}, high ${counts.high ?? 0}, moderate ${counts.moderate ?? 0}, low ${counts.low ?? 0}).`,
+            '',
+            'This report is informational. Review each proposed fix and run the application test suite before changing versions.',
+            ''
+          ];
+          console.log(lines.join('\n'));
+          for (const [name, item] of rows) {
+            const fixes = item.fixAvailable === false ? 'No automatic fix reported' : JSON.stringify(item.fixAvailable);
+            const via = (item.via || []).map(v => typeof v === 'string' ? v : `${v.title} (${v.range || 'range unspecified'})`);
+            const row = `- **${name}** — ${item.severity}; direct: ${item.isDirect}; affected: ${item.range}; fix: ${fixes}; advisories: ${via.join('; ')}`;
+            console.log(row);
+            lines.push(row);
+          }
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          NODE
+      - name: Upload raw audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-advisory-report
+          path: npm-audit-report.json
+          retention-days: 14
