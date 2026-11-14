@@ -180,4 +180,4 @@ This repository is an implementation and portfolio case study, not a penetration
 
 ## Project media
 
-The screenshots in `docs/screenshots/` are supplied project reference captures. The first image is the storefront hero; the following images show product specifications and bundle selection.
+The three supplied project reference screenshots are stored at the repository root: `01-home-hero.jpg` (storefront hero), `02-product-specifications.jpg` (product details) and `03-bundle-options.jpg` (bundle selection).
