@@ -33,36 +33,13 @@ StrydeGoSox is a live commerce experience for a consumer product brand. The appl
 
 ## Application architecture
 
-The browser handles the customer and admin experiences. Business rules and trusted transaction decisions stay in the Express application; MongoDB stores commerce state, while payment and email providers integrate through backend services.
+The browser handles customer and admin experiences. Business rules and trusted transaction decisions stay in the Express application; MongoDB stores commerce state, while payment and email providers integrate through backend services.
 
-```mermaid
-flowchart LR
-  subgraph CLIENT["Browser"]
-    SHOP["Customer storefront"]
-    ADMIN["Admin console"]
-  end
+<p align="center">
+  <img src="docs/architecture-diagram.svg" alt="StrydeGoSox system architecture — browser experiences, Express application, MongoDB and external integrations" width="100%" />
+</p>
 
-  subgraph APP["Node.js / Express"]
-    API["API entry point"]
-    GUARD["Security middleware<br/>CORS · Helmet · rate limits"]
-    ROUTES["Route handlers<br/>Auth · Checkout · Payments · Admin"]
-    SERVICES["Order and inventory logic"]
-    API --> GUARD --> ROUTES --> SERVICES
-  end
-
-  DB[("MongoDB<br/>Users · Products · Orders · Events")]
-  RZ["Razorpay"]
-  MAIL["Resend"]
-
-  SHOP --> API
-  ADMIN --> API
-  SERVICES <--> DB
-  SERVICES <--> RZ
-  RZ -->|"Signed webhook"| API
-  SERVICES --> MAIL
-```
-
-For the checkout sequence, inventory lifecycle, data entities and operational workflows, see the [architecture notes](docs/ARCHITECTURE.md).
+For the detailed checkout sequence, inventory lifecycle, COD workflow, data entities and trust boundaries, continue to the [architecture notes](docs/ARCHITECTURE.md).
 
 ## Engineering decisions
 
