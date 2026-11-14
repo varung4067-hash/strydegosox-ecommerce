@@ -47,6 +47,9 @@ The engineering challenge was to make the purchase lifecycle dependable—not ju
 
 <sub>These are order counts shared by the client, not independently audited conversion-rate, revenue or profit uplift figures.</sub>
 
+
+> **Media packaging note:** the repository includes the three approved product/storefront reference screenshots in `docs/screenshots/`. The complete optimised product-media bundle from the local deployment package is not mirrored in this public source snapshot yet; add those original assets before expecting a byte-for-byte local visual reproduction of the live storefront.
+
 ## Product experience
 
 ### 01 — Storefront hero
@@ -271,7 +274,7 @@ admin/
   js/                   Admin dashboard, COD and refund modules
 frontend/
   index.html
-  assets/               Storefront imagery and product assets
+  assets/               Storefront asset paths; reference captures are in docs/screenshots/
   js/                   Storefront logic and API configuration
   main.js
   style.css
