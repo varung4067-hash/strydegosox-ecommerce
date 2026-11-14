@@ -1,0 +1,68 @@
+name: Apply compatible dependency security fixes
+
+on:
+  push:
+    branches:
+      - security/dependency-audit-fixes
+    paths:
+      - '.github/workflows/apply-security-fixes.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout security branch
+        uses: actions/checkout@v4
+        with:
+          ref: security/dependency-audit-fixes
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Regenerate lockfile with reviewed overrides
+        run: npm install --package-lock-only
+      - name: Install updated lockfile
+        run: npm ci
+      - name: Apply non-breaking security updates
+        run: npm audit fix || true
+      - name: Run syntax checks
+        run: npm run check
+      - name: Run project QA
+        run: npm run qa
+      - name: Report remaining advisories
+        shell: bash
+        run: |
+          npm audit --json > npm-audit-after.json || true
+          node <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('npm-audit-after.json', 'utf8'));
+          const v = report.metadata?.vulnerabilities || {};
+          console.log(`Remaining advisories: ${v.total ?? 'unknown'}; critical ${v.critical ?? 0}; high ${v.high ?? 0}; moderate ${v.moderate ?? 0}; low ${v.low ?? 0}.`);
+          for (const [name, item] of Object.entries(report.vulnerabilities || {})) {
+            console.log(`${name}: ${item.severity}; ${item.range}; direct=${item.isDirect}; fix=${JSON.stringify(item.fixAvailable)}`);
+          }
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Remaining dependency advisories\n\nTotal: ${v.total ?? 'unknown'} · Critical: ${v.critical ?? 0} · High: ${v.high ?? 0} · Moderate: ${v.moderate ?? 0} · Low: ${v.low ?? 0}\n`);
+          NODE
+      - name: Commit tested lockfile updates
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json
+          if git diff --cached --quiet; then
+            echo 'No compatible dependency changes were required.'
+          else
+            git commit -m 'fix: apply compatible dependency security updates'
+            git push origin security/dependency-audit-fixes
+          fi
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-after-fixes
+          path: npm-audit-after.json
+          retention-days: 14
