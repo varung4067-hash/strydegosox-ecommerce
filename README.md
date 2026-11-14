@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/screenshots/01-home-hero.jpg" alt="StrydeGoSox storefront hero — Anytime. Anywhere. Every Step." width="100%" />
+  <img src="01-home-hero.jpg" alt="StrydeGoSox storefront hero — Anytime. Anywhere. Every Step." width="100%" />
   <h1>StrydeGoSox</h1>
   <p><strong>Full-stack e-commerce storefront · Secure checkout · Admin operations</strong></p>
   <p>
@@ -31,11 +31,11 @@ The hero section introduces the product proposition: a full pair of compression 
 
 ### Product specifications
 
-<img src="docs/screenshots/02-product-specifications.jpg" alt="StrydeGoSox product specifications section" width="100%" />
+<img src="02-product-specifications.jpg" alt="StrydeGoSox product specifications section" width="100%" />
 
 ### Bundle and pack selection
 
-<img src="docs/screenshots/03-bundle-options.jpg" alt="StrydeGoSox bundle options with 3, 5 and 10 pair packs" width="100%" />
+<img src="03-bundle-options.jpg" alt="StrydeGoSox bundle options with 3, 5 and 10 pair packs" width="100%" />
 
 ## Core capabilities
 
@@ -134,71 +134,43 @@ The client reported **70 orders in the first week** and **500+ orders in the fir
 - **Security & middleware:** JWT, bcryptjs, Helmet, CSP, CORS, express-rate-limit, HTTP-only cookies
 - **Operations:** request IDs, logging, health/readiness checks, CSV export
 
-## Repository layout
+## Current repository snapshot
+
+The current public `main` branch contains the root-level storefront and operational scripts, environment template, documentation, and three product screenshots.
+
+**Important:** the current GitHub tree does not yet include the nested `frontend/`, `admin/` or `src/` directories referenced by the original package layout. The supplied `package.json` currently points its entry point and QA commands at `src/server.js` and other `src/` modules, so a fresh clone of this GitHub snapshot is **not yet a complete runnable copy**. The full nested source folders still need to be added before the local setup commands can work.
+
+### Files currently visible at the repository root
 
 ```text
-admin/              Owner dashboard and admin-side scripts/assets
-frontend/           Customer storefront, styles, scripts and assets
-src/config/         Database connection
-src/middleware/     Authentication and request middleware
-src/models/         User, product, order, settings and webhook models
-src/routes/         Auth, checkout, payment, admin, COD and refund routes
-src/utils/          Order, Razorpay and email utilities
-docs/screenshots/   Project screenshots used in this README
-seed.js             Initial product catalogue seed script
-production-qa.js    Static/source-level QA checks
+.env.example
+.gitignore
+01-home-hero.jpg
+02-product-specifications.jpg
+03-bundle-options.jpg
+DEPLOYMENT-CHECKLIST.md
+FRONTEND-DESIGN-README.md
+README.md
+SECURITY.md
+admin.js
+cod.js
+config.js
+email.js
+index.html
+llms.txt
+main.js
+orders.js
+package.json
+package-lock.json
+production-qa.js
+razorpay.js
+refunds.js
+seed.js
+store.js
+style.css
+test-email.js
 ```
 
-## Run locally
-
-### Requirements
-
-- Node.js 20 or newer
-- MongoDB instance (MongoDB Atlas or local MongoDB)
-- Razorpay test credentials for payment-flow testing
-- Resend API key and a configured sender for email testing (optional during initial UI work)
-
-### Setup
-
-1. Clone the repository and open the project root.
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Create your private environment file from the template:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Fill in the database, JWT, admin, Razorpay and email values in `.env`. Do not commit this file.
-5. Start the API:
-
-   ```bash
-   npm run dev
-   ```
-
-6. Serve `frontend/` and `admin/` with VS Code Live Server. For the default local configuration, use port `5501` and open `http://127.0.0.1:5501/frontend/index.html`.
-7. Open the admin page at `http://127.0.0.1:5501/admin/admin.html`.
-8. Optionally seed the initial catalogue from the project root:
-
-   ```bash
-   npm run seed
-   ```
-
-The backend defaults to port `5000`. Keep the local frontend/admin origins aligned with the values in `.env` and the allowed development origins in the server configuration.
-
-### Useful commands
-
-```bash
-npm run dev     # Start the API in development mode
-npm start       # Start the app with frontend serving enabled
-npm run seed    # Seed/update initial product metadata
-npm run check   # Run JavaScript syntax checks
-npm run qa      # Run source-level QA checks
-```
 
 ## Deployment and verification notes
 
