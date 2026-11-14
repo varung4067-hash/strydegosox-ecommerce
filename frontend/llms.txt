@@ -1,0 +1,15 @@
+# StrydeGoSox
+
+> StrydeGoSox makes Pocket Socks: graduated compression socks (20–30 mmHg) that fold down into a pocket-sized pack. One size fits most adults. Built for travel, gym, trips and trekking, road trips and biking, and long office days. Sold online in India at https://strydegosox.com/
+
+## Key facts
+- Product: StrydeGoSox Pocket Compression Socks (black and white)
+- Compression: graduated, 20–30 mmHg
+- Price: ₹1,198 per pair; multi-pair packs of 3, 5 and 10 available
+- Shipping: across India, free shipping on orders ₹1,999+, 30-day returns
+- Payment: online (Razorpay) and Cash on Delivery
+- GSTIN: 27AJMPR5077P1Z5
+
+## Links
+- [Shop and product details](https://strydegosox.com/#buy)
+- [FAQ](https://strydegosox.com/#faq)

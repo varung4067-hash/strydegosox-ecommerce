@@ -1,183 +1,349 @@
+<!-- StrydeGoSox portfolio case study. Do not add .env files, live credentials or customer records. -->
 <div align="center">
-  <img src="01-home-hero.jpg" alt="StrydeGoSox storefront hero — Anytime. Anywhere. Every Step." width="100%" />
-  <h1>StrydeGoSox</h1>
-  <p><strong>Full-stack e-commerce storefront · Secure checkout · Admin operations</strong></p>
+  <img src="docs/screenshots/01-home-hero.jpg" alt="StrydeGoSox storefront hero — ANYTIME. ANYWHERE. EVERY STEP." width="100%" />
+  <h1>STRYDEGOSOX</h1>
+  <p><strong>Full-stack commerce · Payment integrity · Inventory operations</strong></p>
   <p>
-    <a href="https://strydegosox.com">Live website</a>
+    <a href="https://strydegosox.com">Live storefront ↗</a>
     &nbsp;·&nbsp;
-    <a href="#architecture">Architecture</a>
+    <a href="docs/ARCHITECTURE.md">System architecture ↗</a>
     &nbsp;·&nbsp;
-    <a href="#security-and-order-integrity">Security</a>
+    <a href="#security-and-order-integrity">Security engineering</a>
   </p>
-  <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JavaScript-111827?style=flat-square" alt="Frontend stack" />
-  <img src="https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-1f6feb?style=flat-square" alt="Backend stack" />
-  <img src="https://img.shields.io/badge/Database-MongoDB-15803d?style=flat-square" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Payments-Razorpay-334155?style=flat-square" alt="Razorpay" />
+  <img src="https://img.shields.io/badge/Frontend-HTML5%20%7C%20CSS3%20%7C%20JavaScript-20232a?style=flat-square" alt="Frontend stack"/>
+  <img src="https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-246b45?style=flat-square" alt="Backend stack"/>
+  <img src="https://img.shields.io/badge/Data-MongoDB%20%7C%20Mongoose-116149?style=flat-square" alt="Data stack"/>
+  <img src="https://img.shields.io/badge/Payments-Razorpay-2454a6?style=flat-square" alt="Razorpay"/>
+  <img src="https://img.shields.io/badge/Email-Resend-5b4b8a?style=flat-square" alt="Resend"/>
 </div>
 
 ---
 
 ## Project overview
 
-StrydeGoSox is a branded e-commerce experience for pocket compression socks. The application brings together a customer storefront, persistent cart, checkout, payment processing, order history and an owner-facing admin workspace for catalogue, inventory and fulfilment operations.
+StrydeGoSox is a client e-commerce platform for pocket compression socks. It brings together a customer storefront, persistent shopping cart, checkout, Razorpay payments, cash-on-delivery (COD) handling and an owner-facing admin workspace for catalogue, inventory, orders, refunds and fulfilment.
 
-The engineering focus was not limited to the storefront UI. The backend owns important commerce decisions—pricing, payment-state verification, inventory reservations, order-state changes and privileged admin actions—so that the browser is not treated as a trusted source of truth.
+The engineering challenge was to make the purchase lifecycle dependable—not just visually complete. Product pricing, payment state, stock availability and privileged admin operations are validated and coordinated by the backend rather than trusted from browser-submitted data.
+
+| Project detail | Summary |
+|:--|:--|
+| **Project type** | Client e-commerce application |
+| **Live product** | [strydegosox.com](https://strydegosox.com) |
+| **Application** | Customer storefront · Admin console · REST API |
+| **Backend / data** | Node.js · Express · MongoDB · Mongoose |
+| **Commerce integrations** | Razorpay · Resend |
+| **Local source QA** | 44/44 checks passed in the prepared project package |
+
+### Business activity reported by the client
+
+<div align="center">
+<table>
+<tr>
+<td align="center" width="50%"><h2>70</h2><strong>Orders in the first week</strong><br/><sub>Client-reported after launch</sub></td>
+<td align="center" width="50%"><h2>500+</h2><strong>Orders in the first month</strong><br/><sub>Client-reported after launch</sub></td>
+</tr>
+</table>
+</div>
+
+<sub>These are order counts shared by the client, not independently audited conversion-rate, revenue or profit uplift figures.</sub>
 
 ## Product experience
 
-### Storefront hero
+### 01 — Storefront hero
+The hero introduces the product proposition: a pair of compression socks packed into a portable tin, with a direct path into product discovery and purchase.
 
-The hero section introduces the product proposition: a full pair of compression socks folded into a pocket-sized tin, supported by a prominent product visual and clear purchase path.
+### 02 — Product specifications
+<img src="docs/screenshots/02-product-specifications.jpg" alt="StrydeGoSox product specifications section" width="100%" />
 
-### Product specifications
+### 03 — Bundle selection
+<img src="docs/screenshots/03-bundle-options.jpg" alt="StrydeGoSox bundle and multi-pack selection" width="100%" />
 
-<img src="02-product-specifications.jpg" alt="StrydeGoSox product specifications section" width="100%" />
+## What I delivered
 
-### Bundle and pack selection
-
-<img src="03-bundle-options.jpg" alt="StrydeGoSox bundle options with 3, 5 and 10 pair packs" width="100%" />
-
-## Core capabilities
-
-| Area | Implemented capability |
+| Product area | Implementation |
 |:--|:--|
-| **Storefront** | Responsive product storytelling, product details, cart, quantity controls and checkout entry point. |
-| **Cart & checkout** | Persistent cart and backend checkout validation using authoritative catalogue data. |
-| **Payments** | Razorpay Standard Checkout, server-side signature verification and webhook processing. |
-| **Cash on delivery** | COD order creation and owner-side collection/fulfilment lifecycle. |
-| **Inventory** | Stock validation, pending-payment reservations, commit/release handling and refund-related restoration. |
-| **Admin workspace** | Product catalogue, inventory adjustments, order search/filter, status updates and fulfilment tracking. |
-| **Refunds** | Refund workflow for eligible captured Razorpay payments, with reconciliation and inventory restoration safeguards. |
-| **Notifications** | Transactional order/status emails through Resend, with idempotency safeguards for supported operations. |
-| **Operations** | CSV export, health/readiness endpoint, request IDs and server-side logging. |
+| **Customer storefront** | Responsive product storytelling, product detail sections, mission-led content, product visuals and purchase paths. |
+| **Shopping cart** | Persistent cart state, quantity controls and item removal. |
+| **Checkout** | Server-authoritative cart pricing, stock validation and checkout idempotency. |
+| **Online payments** | Razorpay order creation, signature verification, amount/currency/order checks and signed webhook processing. |
+| **Cash on delivery** | COD order workflow, collection tracking, failed-delivery handling and remittance management. |
+| **Inventory** | Stock availability, pending-payment reservations, commit/release logic and refund-related restoration. |
+| **Admin workspace** | Product management, stock adjustments, order search/filter, status changes, shipping/tracking and operational views. |
+| **Refunds** | Eligible captured-payment refunds, concurrency safeguards, reconciliation and inventory restoration. |
+| **Notifications** | Transactional order/status emails through Resend with idempotency safeguards for supported operations. |
+| **Operations** | CSV exports, health/readiness endpoints, request IDs and server-side logging. |
 
-## Architecture
+<a id="system-architecture"></a>
+## System architecture
 
-<a id="architecture"></a>
-
-```mermaid
-flowchart LR
-    C[Customer browser] --> UI[Storefront]
-    A[Owner / admin] --> AD[Admin dashboard]
-    UI --> API[Node.js / Express API]
-    AD --> API
-    API --> DB[(MongoDB via Mongoose)]
-    API <--> RP[Razorpay]
-    API --> EM[Resend email API]
-    RP -->|Signed webhook events| API
-```
-
-The frontend and admin UI call the backend API. The backend coordinates persisted catalogue/order state, payment provider interactions and transactional email. Payment and inventory decisions remain server-side.
-
-## Security and order integrity
-
-<a id="security-and-order-integrity"></a>
-
-Checkout and order processing include several layers of protection designed to reduce tampering, duplicate processing and inconsistent commerce state.
-
-| Risk | Safeguard | Why it matters |
-|:--|:--|:--|
-| Browser-side price manipulation | Checkout recalculates prices from database product records. | Prevents a submitted browser total from becoming the trusted order amount. |
-| Forged or mismatched online payment | Razorpay signature verification plus expected amount, currency and order-ownership checks. | Prevents a browser success response by itself from confirming an online order as paid. |
-| Forged gateway notification | Webhook signature verification using the raw request body and configured webhook secret. | Helps authenticate incoming payment events before the application acts on them. |
-| Duplicate webhook delivery | Event tracking using Razorpay event IDs, deterministic fallback identifiers and database uniqueness protection. | Reduces repeated side effects when the gateway retries or redelivers an event. |
-| Repeated checkout submission | Checkout idempotency through an `Idempotency-Key`. | Reduces accidental duplicate order creation from repeated clicks or request retries. |
-| Stock overselling / drift | Server-side availability checks and transaction-aware reserve, commit, release and restoration flows. | Keeps inventory aligned with pending, captured, failed, expired and refunded order states. |
-| Conflicting refund requests | Refund concurrency protection and payment reconciliation. | Helps avoid competing refund operations and inconsistent stock restoration. |
-| Unauthorised admin access | JWT authentication, role enforcement, bcrypt password hashing and HTTP-only session cookies. | Protects privileged product, inventory and order operations. |
-| Common request abuse | Helmet/CSP, restricted CORS, rate limits, input validation and no-store handling for sensitive responses. | Adds defence-in-depth around public APIs and authenticated admin surfaces. |
-| Duplicate notification side effects | Backend-triggered transactional email with idempotency on supported operations. | Reduces repeated confirmation/status notifications on retries. |
-
-### Online-payment lifecycle
+The storefront and admin console are separate browser experiences. Both call the Node.js / Express API, which applies validation and business rules, persists commerce state through Mongoose, and coordinates payment and email providers.
 
 ```mermaid
-flowchart TD
-    A[Customer submits cart] --> B[Backend reloads trusted prices]
-    B --> C[Validate stock and reserve inventory]
-    C --> D[Create Razorpay payment order]
-    D --> E[Customer completes checkout]
-    E --> F[Backend verifies signature, amount, currency and order ownership]
-    F -->|Valid| G[Advance order/payment state]
-    F -->|Invalid| H[Do not mark order paid]
-    I[Razorpay webhook arrives] --> J[Verify webhook signature]
-    J --> K[Deduplicate event]
-    K --> L[Apply eligible event once]
-    G --> M[Commit inventory and trigger order notification]
-    L --> M
-    H --> N[Keep order unconfirmed / handle failure path]
+flowchart TB
+  subgraph BROWSER["Browser experiences"]
+    SHOP["Customer storefront<br/>HTML · CSS · JavaScript"]
+    ADMIN["Owner admin console<br/>HTML · CSS · JavaScript"]
+  end
+  subgraph APP["Application layer"]
+    API["Node.js + Express API"]
+    MIDDLEWARE["Security middleware<br/>CORS · Helmet/CSP · rate limits<br/>session cookies · request IDs"]
+    AUTH["Authentication & role checks<br/>JWT · bcrypt · HTTP-only cookies"]
+    ROUTES["REST route modules<br/>Public · Auth · Checkout · Payments<br/>Admin · COD · Refunds"]
+    SERVICES["Domain services<br/>Pricing · Orders · Inventory<br/>Razorpay · Email"]
+  end
+  subgraph DATA["Persistence"]
+    MODELS["Mongoose models<br/>User · Product · Order<br/>WebhookEvent · StoreSettings"]
+    DB[("MongoDB")]
+  end
+  subgraph PROVIDERS["External services"]
+    RZ["Razorpay"]
+    MAIL["Resend"]
+  end
+  SHOP --> API
+  ADMIN --> API
+  API --> MIDDLEWARE --> AUTH --> ROUTES --> SERVICES
+  SERVICES <--> MODELS
+  MODELS <--> DB
+  SERVICES <--> RZ
+  SERVICES --> MAIL
+  RZ -->|"Signed webhook events"| API
 ```
 
-### Inventory lifecycle
+### Component responsibilities
+
+| Component | Responsibility |
+|:--|:--|
+| **Storefront** | Product discovery, cart interactions, checkout inputs and customer-facing order experience. |
+| **Admin console** | Authenticated catalogue, inventory, order, COD, refund and fulfilment operations. |
+| **Express API** | Request validation, route handling, authentication and application business rules. |
+| **Mongoose models** | User/product/order state, schema validation and database indexes. |
+| **Razorpay** | Online payment order creation, checkout and payment event notifications. |
+| **Resend** | Transactional email delivery initiated by backend order events. |
+
+## Checkout and payment lifecycle
+
+The browser starts checkout, but the server rebuilds the payable amount using trusted catalogue records. Online orders are not considered paid solely because the browser displays a success screen.
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Buyer
+  participant Web as Storefront
+  participant API as Express API
+  participant DB as MongoDB
+  participant RZ as Razorpay
+  participant Mail as Resend
+  Buyer->>Web: Submit cart and checkout details
+  Web->>API: POST checkout + Idempotency-Key
+  API->>DB: Load catalogue records and prices
+  API->>API: Validate quantities and available stock
+  API->>DB: Reserve inventory
+  API->>RZ: Create payment order
+  RZ-->>API: Gateway order reference
+  API-->>Web: Checkout payload
+  Web->>RZ: Launch Standard Checkout
+  Buyer->>RZ: Complete payment
+  RZ-->>Web: Client callback
+  Web->>API: Payment identifiers + signature
+  API->>API: Verify signature and expected transaction details
+  API->>DB: Advance eligible order/payment state
+  RZ-->>API: Signed webhook event
+  API->>API: Verify webhook signature and deduplicate event
+  API->>DB: Reconcile payment, order and inventory state
+  API->>Mail: Trigger relevant order notification
+  API-->>Web: Return current order state
+```
+
+## Inventory and order-state consistency
+
+Inventory is part of the checkout lifecycle, not just a number shown on the product card.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Available
-    Available --> Reserved: Checkout begins
-    Reserved --> Committed: Payment captured / order accepted
-    Reserved --> Available: Payment fails or reservation expires
-    Committed --> Available: Eligible cancellation / refund restores stock
+  [*] --> Available
+  Available --> Reserved: Checkout begins
+  Reserved --> Committed: Payment captured / order accepted
+  Reserved --> Available: Payment fails or reservation expires
+  Committed --> Available: Eligible cancellation / refund restoration
 ```
 
-**Security impact:** these controls reduce opportunities for price tampering, forged payment confirmation, duplicate checkout creation, replayed webhook side effects and inventory inconsistency. They strengthen order integrity, but they are not a guarantee against all fraud. A specific fraud-prevention percentage has not been measured from production event data. COD non-acceptance/no-show risk is separate from Razorpay payment verification.
+The application includes stock reservations, commit/release handling, expiry cleanup and refund/restock safeguards. Production behaviour still depends on configuration and end-to-end validation of concurrency and failure paths.
 
-## Business activity
+## Security and order integrity
 
-The client reported **70 orders in the first week** and **500+ orders in the first month** after launch. These are client-reported order counts, not independently audited conversion, revenue or profit uplift figures.
+The security work focuses on high-risk points in the purchase lifecycle: client-submitted prices, payment confirmation, webhook authenticity, repeated requests, inventory consistency and privileged admin operations.
+
+| Risk | Application safeguard | Practical business value |
+|:--|:--|:--|
+| **Price tampering** | Checkout rebuilds prices from database product records. | A browser-submitted total is not treated as the trusted payable amount. |
+| **Forged payment-success response** | Razorpay checkout-signature verification plus expected amount, currency and order-ownership checks. | A client-side success screen alone cannot mark an online order as paid. |
+| **Forged webhook** | Signature verification using the raw request body and configured webhook secret. | Helps authenticate provider notifications before processing them. |
+| **Repeated webhook delivery** | Event ID tracking, deterministic fallback identifiers and database uniqueness protection. | Reduces duplicate side effects when a provider retries or redelivers an event. |
+| **Double-click / checkout retry** | Checkout idempotency through an `Idempotency-Key`. | Reduces accidental duplicate order creation from repeat submissions of the same request. |
+| **Stock overselling / drift** | Server-side availability checks and reserve, commit, release and restore operations. | Keeps stock aligned with pending, captured, failed, expired and refunded order states. |
+| **Competing refund requests** | Refund concurrency protection and payment reconciliation. | Helps avoid conflicting refund operations and inconsistent stock restoration. |
+| **Unauthorised admin actions** | JWT authentication, role enforcement, bcrypt password hashing and HTTP-only session cookies. | Protects privileged product, inventory and order operations. |
+| **Common request abuse** | Helmet/CSP, restricted CORS, rate limits, input validation and no-store controls for sensitive responses. | Adds defence-in-depth around public APIs and authenticated admin surfaces. |
+| **Repeated email side effects** | Backend-triggered transactional email with idempotency safeguards for supported operations. | Reduces duplicate notification sends on supported retry paths. |
+
+### Security impact
+
+These layered controls reduce opportunities for price tampering, forged payment confirmation, accidental duplicate checkout creation, replayed webhook side effects and inventory inconsistency. The project does not have production telemetry establishing a specific percentage of fraudulent orders prevented, so no such percentage is claimed. COD non-acceptance/no-show risk is separate from online-payment verification.
+
+## Admin and fulfilment workflow
+
+```mermaid
+flowchart TD
+  A["Admin signs in"] --> B["Protected session cookie"]
+  B --> C["Authentication and role middleware"]
+  C --> D["Admin command center"]
+  D --> E["Manage catalogue and stock"]
+  D --> F["Review orders and fulfilment"]
+  D --> G["Record COD collection and remittance"]
+  D --> H["Reconcile eligible refunds"]
+  E --> I["Validated backend operation"]
+  F --> I
+  G --> I
+  H --> I
+  I --> J["Persist state and trigger relevant notifications"]
+```
+
+## Data model overview
+
+```mermaid
+erDiagram
+  USER {
+    ObjectId _id PK
+    string email UK
+    string passwordHash
+    string role
+  }
+  PRODUCT {
+    ObjectId _id PK
+    string sku UK
+    string name
+    number price
+    number stock
+    number reserved
+  }
+  ORDER {
+    ObjectId _id PK
+    string orderNumber UK
+    string checkoutKey UK
+    string paymentMethod
+    string paymentStatus
+    string fulfillmentStatus
+    number total
+  }
+  WEBHOOK_EVENT {
+    ObjectId _id PK
+    string eventId UK
+    string event
+    boolean processed
+  }
+  STORE_SETTINGS {
+    string _id PK
+    number shippingFee
+  }
+  PRODUCT ||--o{ ORDER : "referenced by order line items"
+```
+
+Order line items retain product references and snapshots of SKU, product name, unit price and quantity so catalogue edits do not rewrite order history.
 
 ## Technology stack
 
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** Node.js, Express.js, REST APIs
-- **Database:** MongoDB, Mongoose
-- **Payments:** Razorpay
-- **Email:** Resend
-- **Security & middleware:** JWT, bcryptjs, Helmet, CSP, CORS, express-rate-limit, HTTP-only cookies
-- **Operations:** request IDs, logging, health/readiness checks, CSV export
+| Area | Tools |
+|:--|:--|
+| **Frontend** | HTML5, CSS3, JavaScript |
+| **Backend** | Node.js 20+, Express.js, REST API modules |
+| **Database** | MongoDB, Mongoose |
+| **Payments** | Razorpay Standard Checkout and webhooks |
+| **Email** | Resend transactional email API |
+| **Authentication** | JWT, bcryptjs, HTTP-only cookies, role middleware |
+| **Application security** | Helmet, CSP, CORS restrictions, express-rate-limit, request validation |
+| **Quality checks** | Node syntax checks and custom source-level QA script |
 
-## Current repository snapshot
-
-The current public `main` branch contains the root-level storefront and operational scripts, environment template, documentation, and three product screenshots.
-
-**Important:** the current GitHub tree does not yet include the nested `frontend/`, `admin/` or `src/` directories referenced by the original package layout. The supplied `package.json` currently points its entry point and QA commands at `src/server.js` and other `src/` modules, so a fresh clone of this GitHub snapshot is **not yet a complete runnable copy**. The full nested source folders still need to be added before the local setup commands can work.
-
-### Files currently visible at the repository root
+## Repository structure
 
 ```text
-.env.example
-.gitignore
-01-home-hero.jpg
-02-product-specifications.jpg
-03-bundle-options.jpg
-DEPLOYMENT-CHECKLIST.md
-FRONTEND-DESIGN-README.md
-README.md
-SECURITY.md
-admin.js
-cod.js
-config.js
-email.js
-index.html
-llms.txt
-main.js
-orders.js
-package.json
-package-lock.json
-production-qa.js
-razorpay.js
-refunds.js
-seed.js
-store.js
-style.css
-test-email.js
+admin/
+  admin.html
+  js/                   Admin dashboard, COD and refund modules
+frontend/
+  index.html
+  assets/               Storefront imagery and product assets
+  js/                   Storefront logic and API configuration
+  main.js
+  style.css
+src/
+  config/               MongoDB connection
+  middleware/           Authentication and access control
+  models/               User, Product, Order, StoreSettings, WebhookEvent
+  routes/               Public, Auth, Checkout, Payments, Admin, COD, Refunds
+  utils/                Order, Razorpay and email services
+docs/
+  screenshots/          Product and storefront screenshots
+  ARCHITECTURE.md       Extended system and workflow diagrams
+.env.example            Safe placeholder configuration
+SECURITY.md             Security and credential-handling notes
+DEPLOYMENT-CHECKLIST.md Production configuration and go-live checks
+production-qa.js        Source-level QA checks
+seed.js                 Initial catalogue seeding
+package.json            Scripts and dependencies
 ```
 
+## Run locally
 
-## Deployment and verification notes
+### Prerequisites
+- Node.js 20 or newer
+- MongoDB instance (local or MongoDB Atlas)
+- Razorpay test credentials for payment-flow testing
+- Resend API key and a verified sender for email testing (optional for initial UI work)
 
-The repository includes `DEPLOYMENT-CHECKLIST.md` for environment, payment, inventory, refund and security checks. Before live operation, configure the production domain, HTTPS, restricted database user, backups, live Razorpay keys/webhook, verified email sender and private environment secrets; then test successful/failed payments, duplicate checkout, webhook retries, COD, cancellations, refunds and inventory restoration end to end.
+### Setup
 
-This repository is an implementation and portfolio case study, not a penetration-test report, security certification or independent production-readiness attestation. Production behavior depends on the live environment and operational configuration.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/varung4067-hash/strydegosox-ecommerce.git
+   cd strydegosox-ecommerce
+   ```
+2. Install dependencies: `npm install`
+3. Create a private environment file: `cp .env.example .env`
+4. Fill local MongoDB, JWT, admin, Razorpay test and optional Resend values. Never commit `.env`.
+5. Start the API: `npm run dev`
+6. Serve the `frontend/` and `admin/` directories with a local static server. The default local setup expects port `5501`; storefront: `http://127.0.0.1:5501/frontend/index.html`; admin: `http://127.0.0.1:5501/admin/admin.html`.
+7. Optionally seed the initial catalogue: `npm run seed`
 
-## Project media
+The API defaults to port `5000`. Keep browser origins aligned with the values in your private `.env` and the backend's allowed development origins.
 
-The three supplied project reference screenshots are stored at the repository root: `01-home-hero.jpg` (storefront hero), `02-product-specifications.jpg` (product details) and `03-bundle-options.jpg` (bundle selection).
+### Useful commands
+
+```bash
+npm run dev     # Start API in development mode
+npm start       # Start with frontend serving enabled
+npm run seed    # Seed/update initial product metadata
+npm run check   # Run JavaScript syntax checks
+npm run qa      # Run syntax checks and source-level QA suite
+```
+
+## Quality and verification
+
+The included source-level QA script checks important implementation invariants such as:
+
+- Razorpay raw-body webhook signature handling.
+- Checkout idempotency and server-side order creation.
+- Amount, currency and order verification before payment-state changes.
+- Webhook event deduplication and retry-safe failure handling.
+- Authenticated admin routes and protected session handling.
+- Inventory reserve/release/commit operations and refund reconciliation.
+- Exclusion of production `.env` files and live-looking secrets from the inspected source.
+
+**Latest local source-level run:** 44/44 checks passed in the prepared local package. This is not an independent penetration test, live payment certification or substitute for production end-to-end testing.
+
+## Deployment notes
+
+See [`DEPLOYMENT-CHECKLIST.md`](DEPLOYMENT-CHECKLIST.md) before deploying. Production operation requires HTTPS, private environment secrets, restricted MongoDB access, backups, a verified email sender, Razorpay live keys/webhook and end-to-end testing of successful and failed payments, retries, COD, refunds and inventory restoration.
+
+---
+
+<div align="center"><sub>Built for a real commerce workflow, with attention to user experience, transaction integrity and operational clarity.</sub></div>
