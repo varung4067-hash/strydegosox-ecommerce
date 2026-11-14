@@ -221,36 +221,66 @@ router.patch('/orders/:id/status', async (req, res, next) => {
 });
 
 router.post('/orders/:id/refund', async (req, res, next) => {
-  let order;
+  let lockedId = null;
   try {
-    order = await Order.findOneAndUpdate(
-      { _id: req.params.id, paymentMethod: 'razorpay', paymentStatus: 'captured', razorpayPaymentId: { $exists: true }, refundInProgress: { $ne: true } },
-      { $set: { refundInProgress: true, refundLockAt: new Date() } },
-      { new: true }
-    );
+    const now = new Date();
+    const staleBefore = new Date(Date.now() - 10 * 60 * 1000);
+    const note = String(req.body.note || '').trim().slice(0, 300);
+    const candidate = await Order.findById(req.params.id);
+    if (!candidate) return res.status(404).json({ error: 'Order not found' });
+    if (candidate.paymentMethod !== 'razorpay') return res.status(400).json({ error: 'Only Razorpay orders can be refunded through this endpoint' });
+    if (candidate.paymentStatus === 'refunded') return res.json({ success: true, alreadyRefunded: true, order: candidate });
+
+    const order = await Order.findOneAndUpdate({
+      _id: candidate._id,
+      paymentMethod: 'razorpay',
+      paymentStatus: 'captured',
+      razorpayPaymentId: { $exists: true, $nin: ['', null] },
+      $or: [
+        { refundInProgress: { $ne: true } },
+        { refundInProgress: true, refundLockAt: { $lt: staleBefore } }
+      ]
+    }, { $set: { refundInProgress: true, refundLockAt: now } }, { new: true });
+
     if (!order) {
-      const existing = await Order.findById(req.params.id);
-      if (!existing) return res.status(404).json({ error: 'Order not found' });
-      return res.status(409).json({ error: 'Order is not eligible for a new refund or another refund is in progress' });
+      const fresh = await Order.findById(candidate._id);
+      if (fresh && fresh.paymentStatus === 'refunded') return res.json({ success: true, alreadyRefunded: true, order: fresh });
+      if (fresh && fresh.refundInProgress) return res.status(409).json({ error: 'A refund for this order is already being processed. Refresh in a moment.' });
+      return res.status(400).json({ error: 'Order does not have a captured Razorpay payment' });
+    }
+    lockedId = order._id;
+
+    const payment = await getClient().payments.fetch(order.razorpayPaymentId);
+    const expectedAmount = Math.round(Number(order.total) * 100);
+    if (Number(payment.amount) !== expectedAmount || payment.currency !== order.currency) {
+      return res.status(400).json({ error: 'Razorpay payment does not match the local order' });
     }
 
-    const refund = await getClient().payments.refund(order.razorpayPaymentId, {
-      notes: { local_order_id: String(order._id), order_number: order.orderNumber }
-    });
+    const refunded = Number(payment.amount_refunded || 0);
+    const remaining = expectedAmount - refunded;
+    if (remaining > 0) {
+      const refund = await getClient().payments.refund(order.razorpayPaymentId, {
+        amount: remaining,
+        notes: { local_order_id: String(order._id), order_number: order.orderNumber }
+      });
+      order.razorpayRefundId = refund && refund.id ? refund.id : order.razorpayRefundId;
+    }
+
+    if (order.stockCommittedAt) await restockCommittedStock(order);
     order.paymentStatus = 'refunded';
     order.fulfillmentStatus = 'refunded';
+    order.reservedUntil = null;
+    order.refundAmount = expectedAmount / 100;
+    order.refundedAt = order.refundedAt || new Date();
     order.refundInProgress = false;
     order.refundLockAt = null;
-    order.razorpayRefundId = refund.id;
-    order.refundAmount = Number(order.total);
-    order.refundedAt = new Date();
+    if (note) order.notes = [order.notes, 'Refund note: ' + note].filter(Boolean).join('\n');
     await order.save();
-    if (order.stockCommittedAt) await restockCommittedStock(order);
     sendOrderStatusEmail(order, 'refunded').catch(err => console.error('Refund email failed:', err.message));
-    res.json({ success: true, refundId: refund.id, order });
+    return res.json({ success: true, order });
   } catch (e) {
-    if (order?._id) {
-      await Order.updateOne({ _id: order._id }, { $set: { refundInProgress: false, refundLockAt: null } }).catch(() => {});
+    if (lockedId) {
+      await Order.findOneAndUpdate({ _id: lockedId, refundInProgress: true }, { $set: { refundInProgress: false }, $unset: { refundLockAt: 1 } }).catch(() => {});
     }
     next(e);
   }
