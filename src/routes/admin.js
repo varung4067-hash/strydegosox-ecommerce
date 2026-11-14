@@ -193,7 +193,12 @@ router.patch('/orders/:id/status', async (req, res, next) => {
     if (status === 'shipped') {
       const trackingNumber = String(req.body.trackingNumber || '').trim().slice(0, 120);
       const trackingUrl = String(req.body.trackingUrl || '').trim();
-      if (trackingUrl && !/^https:\/\//i.test(trackingUrl)) return res.status(400).json({ error: 'Tracking URL must use HTTPS' });
+      if (trackingUrl) {
+        let parsed;
+        try { parsed = new URL(trackingUrl); }
+        catch { return res.status(400).json({ error: 'Tracking URL must be a valid HTTPS URL' }); }
+        if (parsed.protocol !== 'https:') return res.status(400).json({ error: 'Tracking URL must use HTTPS' });
+      }
       order.trackingNumber = trackingNumber;
       order.trackingUrl = trackingUrl;
       order.shippedAt = new Date();

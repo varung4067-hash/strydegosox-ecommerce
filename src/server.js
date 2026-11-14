@@ -151,6 +151,7 @@ if (process.env.SERVE_FRONTEND === 'true') {
     }
   }));
   app.get('/admin', (req, res) => res.sendFile(path.join(adminDir, 'admin.html')));
+  app.use('/admin', (req, res) => res.status(404).send('Admin resource not found'));
   app.use(express.static(frontendDir, { maxAge: IS_PRODUCTION ? '1d' : 0 }));
   app.get('*', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
 }

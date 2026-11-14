@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StrydeGoSox — Admin Command Center</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#070707;--black2:#0d0e10;--black3:#131417;--black4:#191b1f;
+  --white:#f5f2ea;--muted:#85878c;--muted2:#b9bbc0;--red:#e21d2b;--red2:#ff4654;
+  --green:#39d98a;--yellow:#f3bd45;--blue:#5ca7ff;--line:rgba(255,255,255,.09);
+  --ease:cubic-bezier(.22,1,.36,1);--radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:Manrope,sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{border:0}
+a{color:inherit;text-decoration:none}
+.display{font-family:Anton,sans-serif;font-weight:400;text-transform:uppercase;line-height:.92}
+.mono{font-family:"JetBrains Mono",monospace}
+.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:#090a0b;border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:50}
+.brand{height:84px;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--line);gap:10px}
+.mark{width:30px;height:30px;border:1.5px solid #fff;border-radius:50%;background:conic-gradient(from 220deg,var(--red) 0 140deg,#080808 140deg 360deg)}
+.brand strong{font-family:Anton;font-size:21px;letter-spacing:.01em}.brand strong span{color:var(--red)}
+.admin-pill{margin:17px 18px 8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;color:#777;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.nav{padding:8px 12px;display:grid;gap:4px}
+.nav button{background:transparent;color:#7f8186;width:100%;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;font-size:12px;font-weight:700;transition:.25s}
+.nav button:hover,.nav button.active{background:rgba(226,29,43,.11);color:#fff}
+.nav button.active{box-shadow:inset 2px 0 0 var(--red)}
+.icon{width:19px;height:19px;display:grid;place-items:center;color:currentColor}.icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6}
+.sidebar-bottom{margin-top:auto;padding:16px;border-top:1px solid var(--line)}
+.store-status{display:flex;align-items:center;gap:8px;color:#777;font-size:10px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(57,217,138,.6)}
+.main{grid-column:2;min-width:0}
+.topbar{height:84px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px;background:rgba(7,7,7,.82);backdrop-filter:blur(18px);position:sticky;top:0;z-index:40}
+.page-kicker{color:var(--red);font:10px "JetBrains Mono";letter-spacing:.18em;text-transform:uppercase}.page-title{font-size:22px;margin-top:4px}
+.top-actions{display:flex;align-items:center;gap:10px}.live-pill{display:inline-flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid rgba(57,217,138,.2);background:rgba(57,217,138,.05);border-radius:999px;color:#8edab2;font:700 9px JetBrains Mono,monospace;letter-spacing:.08em;text-transform:uppercase}.live-pill i{width:6px;height:6px;border-radius:50%;background:#39d98a;box-shadow:0 0 12px rgba(57,217,138,.8)}.top-btn{background:#121316;border:1px solid var(--line);color:#c5c6ca;padding:10px 13px;border-radius:10px;cursor:pointer;font-size:11px}.top-btn:hover{border-color:#555;color:#fff}
+.avatar{width:35px;height:35px;border-radius:50%;background:var(--red);display:grid;place-items:center;font:11px "JetBrains Mono";color:#fff}
+.content{padding:30px 34px 60px;max-width:1600px;margin:auto}
+.view{display:none}.view.active{display:block}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,1fr)}
+.card{background:linear-gradient(145deg,#111215,#0d0e10);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.15)}
+.stat-card{min-height:145px;position:relative;overflow:hidden}.stat-card:after{content:"";position:absolute;width:130px;height:130px;right:-50px;top:-55px;border-radius:50%;background:radial-gradient(circle,rgba(226,29,43,.18),transparent 65%)}
+.stat-label{color:#777;font:9px "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase}.stat-value{font:600 31px "JetBrains Mono";margin-top:16px}.stat-change{margin-top:10px;font-size:10px;color:var(--green)}.stat-change.down{color:var(--red2)}
+.dashboard-grid{grid-template-columns:1.45fr .8fr;margin-top:16px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.section-head h2{font-size:14px}.section-head span{color:#666;font:9px "JetBrains Mono";letter-spacing:.12em}
+.chart{height:285px;display:flex;align-items:end;gap:10px;padding:20px 4px 0;border-bottom:1px solid var(--line)}
+.bar-wrap{height:100%;flex:1;display:flex;align-items:end;gap:3px}.bar{flex:1;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--red2),var(--red));min-height:8px;transition:.4s var(--ease)}.bar:hover{filter:brightness(1.2)}.bar.alt{background:#34363a}.bar-label{font:8px "JetBrains Mono";color:#666;text-align:center;margin-top:8px}
+.activity{display:grid;gap:2px}.activity-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);align-items:flex-start}.activity-item:last-child{border:0}.activity-icon{width:30px;height:30px;border-radius:9px;background:#18191d;display:grid;place-items:center;color:var(--red);font-size:12px}.activity-copy{flex:1}.activity-copy strong{font-size:11px;display:block}.activity-copy span{font-size:9px;color:#666;display:block;margin-top:3px}.status{display:inline-flex;padding:5px 8px;border-radius:999px;font:8px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase}.status.green{background:rgba(57,217,138,.1);color:var(--green)}.status.red{background:rgba(226,29,43,.12);color:#ff6570}.status.yellow{background:rgba(243,189,69,.1);color:var(--yellow)}.status.blue{background:rgba(92,167,255,.1);color:var(--blue)}
+.table-card{margin-top:16px}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th{text-align:left;color:#65676c;font:8px "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;padding:11px 12px;border-bottom:1px solid var(--line)}.table td{padding:14px 12px;border-bottom:1px solid var(--line);font-size:11px;color:#d0d1d4}.table tr:last-child td{border-bottom:0}.product-cell{display:flex;align-items:center;gap:11px}.thumb{width:42px;height:42px;border-radius:9px;background:#191a1e;display:grid;place-items:center;overflow:hidden}.thumb img{max-width:100%;max-height:100%;object-fit:contain}.tiny-muted{color:#666;font-size:9px;margin-top:3px}.low{color:var(--yellow)!important}.out{color:#ff6570!important}.action-btn{background:#17181b;color:#aaa;border:1px solid var(--line);padding:7px 9px;border-radius:8px;font-size:9px;cursor:pointer}.action-btn:hover{color:#fff;border-color:#555}.primary{background:var(--red);color:#fff;border-color:var(--red)}.primary:hover{background:var(--red2)}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}.search{background:#111215;border:1px solid var(--line);color:#fff;padding:11px 13px;border-radius:10px;min-width:250px;outline:none;font-size:11px}.search:focus{border-color:rgba(226,29,43,.65)}.select{background:#111215;color:#aaa;border:1px solid var(--line);padding:11px 12px;border-radius:10px;font-size:10px;outline:none}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{color:#777;font:8px "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase}.field input,.field select,.field textarea{width:100%;background:#0b0c0e;border:1px solid var(--line);border-radius:10px;color:#fff;padding:12px;outline:none;font-size:11px}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(226,29,43,.7)}
+.drawer{position:fixed;inset:0;z-index:100;display:none}.drawer.open{display:block}.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(5px)}.drawer-panel{position:absolute;right:0;top:0;height:100%;width:min(560px,94vw);background:#0b0c0e;border-left:1px solid var(--line);padding:25px;overflow:auto;box-shadow:-30px 0 80px rgba(0,0,0,.4)}
+.modal{position:fixed;inset:0;z-index:110;display:none;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.modal-panel{width:min(700px,96vw);max-height:90vh;overflow:auto;background:#0c0d0f;border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 30px 100px rgba(0,0,0,.6)}
+.close{background:#17181b;color:#888;width:34px;height:34px;border-radius:9px;cursor:pointer}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modal-head h3{font-size:16px}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:center}.cart-item .thumb{width:54px;height:54px}.cart-info{flex:1}.cart-info strong{font-size:11px}.qty{display:flex;align-items:center;gap:8px;margin-top:7px}.qty button{width:25px;height:25px;border-radius:7px;background:#17181b;color:#fff;cursor:pointer}.qty span{font:10px "JetBrains Mono";color:#aaa}.cart-price{font:11px "JetBrains Mono"}.summary{margin-top:20px;border-top:1px solid var(--line);padding-top:17px;display:grid;gap:9px}.sum-row{display:flex;justify-content:space-between;font-size:11px;color:#888}.sum-row.total{color:#fff;font:600 14px "JetBrains Mono";padding-top:9px}.notice{padding:12px;border:1px solid rgba(243,189,69,.2);background:rgba(243,189,69,.05);border-radius:10px;color:#aaa;font-size:9px;line-height:1.6;margin-top:15px}
+.toast{position:fixed;right:25px;bottom:25px;z-index:200;background:#15171a;border:1px solid var(--line);padding:12px 15px;border-radius:11px;box-shadow:0 15px 50px rgba(0,0,0,.4);font-size:10px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.3s}.toast.show{transform:none;opacity:1}.toast b{color:var(--red);margin-right:7px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.integration{display:flex;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--line);border-radius:12px;background:#101114;margin-top:10px}.integration strong{font-size:11px}.integration small{display:block;color:#666;font-size:8px;margin-top:3px}.toggle{width:42px;height:23px;background:#292b2f;border-radius:99px;position:relative;cursor:pointer}.toggle:after{content:"";position:absolute;width:17px;height:17px;left:3px;top:3px;background:#777;border-radius:50%;transition:.2s}.toggle.on{background:var(--red)}.toggle.on:after{left:22px;background:#fff}
+/* COD section */
+.nav button{position:relative}
+.nav-badge{margin-left:auto;min-width:19px;height:19px;padding:0 6px;border-radius:99px;background:var(--red);color:#fff;font:700 9px "JetBrains Mono",monospace;display:grid;place-items:center}
+.nav-badge[hidden]{display:none}
+.cod-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cod-tab{background:#111215;border:1px solid var(--line);color:#9a9ca1;padding:9px 13px;border-radius:999px;font-size:10px;font-weight:700;cursor:pointer;transition:.2s}
+.cod-tab span{margin-left:6px;color:#666;font:9px "JetBrains Mono",monospace}
+.cod-tab:hover{color:#fff;border-color:#444}
+.cod-tab.active{background:rgba(226,29,43,.14);border-color:rgba(226,29,43,.5);color:#fff}
+.cod-tab.active span{color:#ff8a93}
+.action-btn:disabled{cursor:not-allowed}
+
+/* Refund center */
+.refund-tab{background:#111215;border:1px solid var(--line);color:#9a9ca1;padding:9px 13px;border-radius:999px;font-size:10px;font-weight:700;cursor:pointer;transition:.2s}
+.refund-tab span{margin-left:6px;color:#666;font:9px "JetBrains Mono",monospace}.refund-tab:hover{color:#fff;border-color:#444}.refund-tab.active{background:rgba(226,29,43,.14);border-color:rgba(226,29,43,.5);color:#fff}.refund-tab.active span{color:#ff8a93}
+.refund-id{font-family:"JetBrains Mono",monospace;font-size:9px;color:#9ea0a5}.refund-detail{display:grid;gap:3px;line-height:1.45}.refund-actions{display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:1050px){.nav-badge{position:absolute;top:5px;right:8px;margin:0;min-width:16px;height:16px;font-size:8px}}
+@media(max-width:1050px){.app{grid-template-columns:78px 1fr}.sidebar{width:78px}.brand{padding:0 23px}.brand strong,.admin-pill,.nav button span,.sidebar-bottom span{display:none}.nav button{justify-content:center}.main{grid-column:2}.stats{grid-template-columns:1fr 1fr}.dashboard-grid{grid-template-columns:1fr}.content{padding:25px 20px}}
+@media(max-width:650px){.topbar{padding:0 16px}.top-actions .top-btn{display:none}.stats{grid-template-columns:1fr}.form-grid,.settings-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.content{padding:20px 14px}.search{min-width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="mark"></div><strong>STRYDE<span>GO</span>SOX</strong></div>
+  <div class="admin-pill">Admin Command Center</div>
+  <nav class="nav">
+    <button class="active" data-view="overview"><i class="icon">⌂</i><span>Overview</span></button>
+    <button data-view="products"><i class="icon">▣</i><span>Products</span></button>
+    <button data-view="inventory"><i class="icon">▤</i><span>Inventory</span></button>
+    <button data-view="orders"><i class="icon">◫</i><span>Orders</span></button>
+    <button data-view="cod"><i class="icon">◧</i><span>Cash on Delivery</span><b class="nav-badge" id="codBadge" hidden>0</b></button>
+    <button data-view="refunds"><i class="icon">↻</i><span>Refunds</span><b class="nav-badge" id="refundBadge" hidden>0</b></button>
+    <button data-view="customers"><i class="icon">◎</i><span>Customers</span></button>
+    <button data-view="store"><i class="icon">◉</i><span>Store / Cart</span></button>
+    <button data-view="payments"><i class="icon">₹</i><span>Payments</span></button>
+    <button data-view="settings"><i class="icon">⚙</i><span>Settings</span></button>
+  </nav>
+  <div class="sidebar-bottom"><div class="store-status"><i class="dot"></i><span>Storefront operational</span></div></div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><div class="page-kicker">StrydeGoSox / Admin</div><div class="page-title" id="pageTitle">Overview</div></div>
+  <div class="top-actions">
+    <span class="live-pill" id="liveStatus"><i></i> Live sync</span><button class="top-btn" onclick="showView('store')">View Store ↗</button>
+    <button class="top-btn" onclick="openCart()">Cart <b id="cartCount">0</b></button>
+    <button class="top-btn" id="adminLogoutBtn" type="button" title="Sign out of the admin dashboard">Sign out</button>
+    <div class="avatar">VG</div>
+  </div>
+</header>
+
+<section class="content">
+<div class="view active" id="overview">
+  <div class="grid stats">
+    <div class="card stat-card"><div class="stat-label">Gross sales · 30 days</div><div class="stat-value" id="salesStat">—</div><div class="stat-change">Orders from the connected API</div></div>
+    <div class="card stat-card"><div class="stat-label">Orders</div><div class="stat-value" id="ordersStat">—</div><div class="stat-change">Last 30 days</div></div>
+    <div class="card stat-card"><div class="stat-label">Units in stock</div><div class="stat-value" id="stockStat">—</div><div class="stat-change down">Low-stock alerts</div></div>
+    <div class="card stat-card"><div class="stat-label">Customers</div><div class="stat-value" id="customerStat">—</div><div class="stat-change">Distinct customer emails</div></div>
+  </div>
+  <div class="grid dashboard-grid">
+    <div class="card"><div class="section-head"><h2>Sales performance</h2><span>LAST 7 DAYS</span></div><div class="chart" id="salesChart"></div></div>
+    <div class="card"><div class="section-head"><h2>Live activity</h2><span>RECENT OPERATIONS</span></div><div class="activity" id="liveActivity"></div></div>
+  </div>
+  <div class="card table-card"><div class="section-head"><h2>Recent orders</h2><button class="action-btn" onclick="showView('orders')">View all →</button></div><div class="table-wrap"><table class="table"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody id="recentOrders"></tbody></table></div></div>
+</div>
+
+<div class="view" id="products">
+  <div class="toolbar"><input class="search" id="productSearch" placeholder="Search products..." oninput="renderProducts()"><select class="select" id="productFilter" onchange="renderProducts()"><option value="all">All products</option><option value="active">Active</option><option value="draft">Draft</option></select><button class="action-btn" onclick="exportProductsCSV()">Export CSV ↓</button><button class="action-btn primary" onclick="openProductModal()">+ Add product</button></div>
+  <div class="card table-card" style="margin-top:0"><div class="section-head"><h2>Product catalogue</h2><span id="productCount"></span></div><div class="table-wrap"><table class="table"><thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody id="productTable"></tbody></table></div></div>
+</div>
+
+<div class="view" id="inventory">
+  <div class="grid stats">
+    <div class="card stat-card"><div class="stat-label">Total units</div><div class="stat-value" id="inventoryTotal">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Low stock</div><div class="stat-value" id="inventoryLow">—</div><div class="stat-change down">Needs attention</div></div>
+    <div class="card stat-card"><div class="stat-label">Out of stock</div><div class="stat-value" id="inventoryOut">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Inventory value</div><div class="stat-value" id="inventoryValue">—</div></div>
+  </div>
+  <div class="card table-card"><div class="section-head"><h2>Stock control</h2><span>QUICK ADJUST</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Product</th><th>Current</th><th>Reorder point</th><th>Stock status</th><th>Adjust</th></tr></thead><tbody id="inventoryTable"></tbody></table></div></div>
+</div>
+
+<div class="view" id="orders">
+  <div class="toolbar"><input class="search" id="orderSearch" placeholder="Search order / customer..." oninput="renderOrders()"><select class="select" id="orderFilter" onchange="renderOrders()"><option value="all">All statuses</option><option value="paid">Paid</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option><option value="refunded">Refunded</option></select><button class="action-btn" onclick="exportOrdersCSV()">Export CSV ↓</button></div>
+  <div class="card" style="margin-top:0"><div class="section-head"><h2>Order history</h2><span id="orderCount"></span></div><div class="table-wrap"><table class="table"><thead><tr><th>Order</th><th>Customer</th><th>Products</th><th>Total</th><th>Payment</th><th>Fulfilment</th><th>Action</th></tr></thead><tbody id="orderTable"></tbody></table></div></div>
+</div>
+
+<div class="view" id="cod">
+  <div class="grid stats">
+    <div class="card stat-card"><div class="stat-label">Cash outstanding</div><div class="stat-value" id="codOutstanding">₹0</div><div class="stat-change down" id="codOutstandingSub">Shipped, cash not yet collected</div></div>
+    <div class="card stat-card"><div class="stat-label">Collected, awaiting remittance</div><div class="stat-value" id="codAwaiting">₹0</div><div class="stat-change" id="codAwaitingSub">Cash held by couriers</div></div>
+    <div class="card stat-card"><div class="stat-label">Remitted to you</div><div class="stat-value" id="codRemitted">₹0</div><div class="stat-change" id="codRemittedSub">Paid out by couriers</div></div>
+    <div class="card stat-card"><div class="stat-label">Failed / returned rate</div><div class="stat-value" id="codFailRate">—</div><div class="stat-change down" id="codFailRateSub">Of settled COD orders</div></div>
+  </div>
+  <div class="card table-card"><div class="section-head"><h2>Cash on Delivery orders</h2><span id="codCount"></span></div><div class="cod-tabs" id="codTabs" role="tablist" aria-label="COD stage"></div>
+    <div class="toolbar"><input class="search" id="codSearch" placeholder="Search order, customer, phone, city, tracking..." aria-label="Search COD orders"><button type="button" class="action-btn" id="codRefreshBtn">Refresh</button><button type="button" class="action-btn" id="codExportBtn">Export CSV ↓</button><button type="button" class="action-btn primary" id="codRemitBtn" disabled style="opacity:.5">Record remittance</button></div>
+    <div class="table-wrap"><table class="table" style="min-width:980px"><thead><tr><th style="width:34px"><input type="checkbox" id="codSelectAll" aria-label="Select all collected orders" disabled></th><th>Order</th><th>Customer</th><th>COD amount</th><th>Stage</th><th>Details</th><th>Actions</th></tr></thead><tbody id="codBody"></tbody></table></div>
+    <div class="notice">Recording cash on a shipped order marks it paid and delivered. After the courier pays you out, select the collected orders and record the remittance so your books match your bank.</div>
+  </div>
+</div>
+
+<div class="view" id="refunds">
+  <div class="grid stats">
+    <div class="card stat-card"><div class="stat-label">Refundable payments</div><div class="stat-value" id="refundEligibleAmount">₹0</div><div class="stat-change" id="refundEligibleSub">0 eligible orders</div></div>
+    <div class="card stat-card"><div class="stat-label">Refunded</div><div class="stat-value" id="refundTotalAmount">₹0</div><div class="stat-change" id="refundTotalSub">0 refunded orders</div></div>
+    <div class="card stat-card"><div class="stat-label">Pending review</div><div class="stat-value" id="refundPendingAmount">₹0</div><div class="stat-change down" id="refundPendingSub">Orders needing attention</div></div>
+    <div class="card stat-card"><div class="stat-label">Refund success</div><div class="stat-value" id="refundSuccessRate">—</div><div class="stat-change" id="refundSuccessSub">Based on completed refunds</div></div>
+  </div>
+  <div class="card table-card"><div class="section-head"><div><h2>Refund center</h2><div class="tiny-muted" style="margin-top:4px">Select a captured payment and issue a full refund to the original Razorpay payment method.</div></div><span id="refundCount"></span></div>
+    <div class="cod-tabs" id="refundTabs" role="tablist" aria-label="Refund stage"></div>
+    <div class="toolbar"><input class="search" id="refundSearch" placeholder="Search order, customer, email, payment ID..." aria-label="Search refunds"><button type="button" class="action-btn" id="refundRefreshBtn">Refresh</button><button type="button" class="action-btn" id="refundExportBtn">Export CSV ↓</button></div>
+    <div class="table-wrap"><table class="table" style="min-width:1100px"><thead><tr><th>Order</th><th>Customer</th><th>Payment</th><th>Amount</th><th>Status</th><th>Refund details</th><th>Action</th></tr></thead><tbody id="refundBody"></tbody></table></div>
+    <div class="notice">Refunds are only issued against captured Razorpay payments. The server checks the payment before refunding, prevents concurrent refund requests and records refund state locally. Cash on Delivery orders cannot be refunded here.</div>
+  </div>
+</div>
+
+<div class="view" id="customers">
+  <div class="grid stats">
+    <div class="card stat-card"><div class="stat-label">Customers</div><div class="stat-value" id="customerCount">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Repeat purchase</div><div class="stat-value" id="repeatRate">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Average order</div><div class="stat-value" id="averageOrder">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Customer LTV</div><div class="stat-value" id="customerLtv">—</div></div>
+  </div>
+  <div class="card table-card"><div class="section-head"><h2>Customer directory</h2><button class="action-btn" onclick="exportCustomersCSV()">Export CSV ↓</button></div><div class="table-wrap"><table class="table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th><th>Segment</th></tr></thead><tbody id="customerTable"></tbody></table></div></div>
+</div>
+
+<div class="view" id="store">
+  <div class="card"><div class="section-head"><div><h2>Storefront commerce</h2><div class="tiny-muted">Customer-side catalogue + inventory-connected storefront</div></div><button class="action-btn primary" onclick="openCart()">Open cart · <span id="storeCartCount">0</span></button></div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)" id="storeProducts"></div>
+  </div>
+  <div class="notice">This command center is connected to the API. Product and inventory data are stored server-side; the admin cart is only a storefront preview.</div>
+</div>
+
+<div class="view" id="payments">
+  <div class="grid stats">
+    <div class="card stat-card"><div class="stat-label">Captured</div><div class="stat-value" id="paymentCaptured">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="paymentPending">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Refunded</div><div class="stat-value" id="paymentRefunded">—</div></div>
+    <div class="card stat-card"><div class="stat-label">Razorpay status</div><div class="stat-value" style="font-size:19px">SERVER VERIFIED</div></div>
+  </div>
+  <div class="grid settings-grid" style="margin-top:16px">
+    <div class="card"><div class="section-head"><h2>Razorpay integration</h2><span>PAYMENT GATEWAY</span></div>
+      <div class="integration"><div><strong>Standard Checkout</strong><small>UPI · Cards · Netbanking · Wallets</small></div><div class="toggle on"></div></div>
+      <div class="integration"><div><strong>Server-side order creation</strong><small>Creates a fresh Razorpay order before checkout</small></div><div class="toggle on"></div></div>
+      <div class="integration"><div><strong>Signature verification</strong><small>Payment signature is verified by the backend</small></div><div class="toggle on"></div></div>
+      <div class="integration"><div><strong>Webhook events</strong><small>Signed event verification and deduplication</small></div><div class="toggle on"></div></div>
+      <div class="notice">Never put the Razorpay Key Secret in this dashboard or frontend JavaScript. Only the Key ID belongs in the browser.</div>
+    </div>
+    <div class="card"><div class="section-head"><h2>Operational checks</h2><span>GO LIVE</span></div><div class="activity">
+      <div class="activity-item"><div class="activity-icon">✓</div><div class="activity-copy"><strong>Checkout script</strong><span>Razorpay Standard Checkout</span></div><span class="status green">Configured</span></div>
+      <div class="activity-item"><div class="activity-icon">✓</div><div class="activity-copy"><strong>Order API</strong><span>Backend creates payment orders</span></div><span class="status green">Configured</span></div>
+      <div class="activity-item"><div class="activity-icon">✓</div><div class="activity-copy"><strong>Signature verification</strong><span>Server verifies transaction response</span></div><span class="status green">Configured</span></div>
+      <div class="activity-item"><div class="activity-icon">✓</div><div class="activity-copy"><strong>Webhook</strong><span>Signed and deduplicated events</span></div><span class="status green">Configured</span></div>
+    </div></div>
+  </div>
+</div>
+
+<div class="view" id="settings">
+  <div class="grid settings-grid">
+    <div class="card"><div class="section-head"><h2>Store settings</h2><span>GENERAL</span></div><div class="form-grid">
+      <div class="field"><label>Store name</label><input value="StrydeGoSox" readonly></div>
+      <div class="field"><label>Currency</label><select disabled><option>INR — ₹</option></select></div>
+      <div class="field"><label>Low stock threshold</label><input type="number" value="10" readonly></div>
+      <div class="field"><label>Tax rate</label><input type="number" value="0" readonly></div>
+      <div class="field"><label>Delivery fee (₹)</label><input id="shippingFee" type="number" min="0" step="1" value="99" required></div>
+      <div class="field full"><label>Order email</label><input value="orders@strydegosox.com" readonly></div>
+    </div><button class="action-btn primary" style="margin-top:15px" onclick="saveStoreSettings()">Save settings</button></div>
+    <div class="card"><div class="section-head"><h2>Integrations</h2><span>CONNECTIONS</span></div>
+      <div class="integration"><div><strong>Razorpay</strong><small>Payments & webhooks</small></div><span class="status green">Server-side</span></div>
+      <div class="integration"><div><strong>Email notifications</strong><small>Order confirmations & shipping</small></div><span class="status green">Resend</span></div>
+      <div class="integration"><div><strong>Inventory API</strong><small>Database-backed stock updates</small></div><span class="status green">MongoDB</span></div>
+    </div>
+  </div>
+</div>
+
+</section>
+</main>
+</div>
+
+<div class="modal" id="productModal"><div class="modal-panel"><div class="modal-head"><h3 id="productModalTitle">Add product</h3><button class="close" onclick="closeModal('productModal')">×</button></div>
+<form id="productForm" class="form-grid">
+  <input type="hidden" id="productId">
+  <div class="field"><label>Product name</label><input id="productName" required></div>
+  <div class="field"><label>SKU</label><input id="productSku" required></div>
+  <div class="field"><label>Price (₹)</label><input id="productPrice" type="number" min="0" required></div>
+  <div class="field"><label>Compare-at price (₹)</label><input id="productCompare" type="number" min="0"></div>
+  <div class="field"><label>Quantity</label><input id="productQty" type="number" min="0" required></div>
+  <div class="field"><label>Reorder point</label><input id="productReorder" type="number" min="0" value="10"></div>
+  <div class="field"><label>Status</label><select id="productStatus"><option>active</option><option>draft</option></select></div>
+  <div class="field"><label>Image path</label><input id="productImage" value="assets/tin-closed.webp"></div>
+  <div class="field full"><label>Description</label><textarea id="productDescription">Pocket compression socks in a compact travel pack.</textarea></div>
+  <div class="field full" style="display:flex;justify-content:flex-end;flex-direction:row;gap:8px"><button type="button" class="action-btn" onclick="closeModal('productModal')">Cancel</button><button class="action-btn primary">Save product</button></div>
+</form></div></div>
+
+<div class="drawer" id="cartDrawer"><div class="backdrop" onclick="closeCart()"></div><div class="drawer-panel"><div class="modal-head"><div><div class="page-kicker">Storefront</div><h3>Your cart</h3></div><button class="close" onclick="closeCart()">×</button></div><div id="cartItems"></div><div class="summary" id="cartSummary"></div></div></div>
+
+<div class="modal" id="checkoutModal"><div class="modal-panel"><div class="modal-head"><div><div class="page-kicker">Secure checkout</div><h3>Complete your order</h3></div><button class="close" onclick="closeModal('checkoutModal')">×</button></div>
+<form id="checkoutForm" class="form-grid">
+  <div class="field"><label>Full name</label><input id="customerName" required></div>
+  <div class="field"><label>Phone</label><input id="customerPhone" required></div>
+  <div class="field full"><label>Email</label><input id="customerEmail" type="email" required></div>
+  <div class="field full"><label>Shipping address</label><textarea id="customerAddress" required></textarea></div>
+  <div class="field"><label>City</label><input id="customerCity" required></div>
+  <div class="field"><label>PIN code</label><input id="customerPin" required></div>
+  <div class="field full"><label>Payment</label><select id="paymentMethod"><option>Razorpay — UPI / Card / Netbanking</option><option>Cash on Delivery</option></select></div>
+  <div class="field full"><div class="notice">Online payments are verified server-side before an order is treated as paid.</div></div>
+  <div class="field full" style="display:flex;justify-content:flex-end"><button class="action-btn primary">Place order / Pay securely →</button></div>
+</form></div></div>
+
+<div class="toast" id="toast"><b>●</b><span id="toastText">Saved</span></div>
+<script src="js/config.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/cod.js"></script>
+<script src="js/refunds.js"></script>
+</body>
+</html>
